@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analyse des Simulations Unity</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #555;
+            margin-top: 30px;
+        }
+        .section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .figure-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .figure-item {
+            text-align: center;
+        }
+        .figure-item img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .figure-item p {
+            margin-top: 10px;
+            font-weight: bold;
+            color: #666;
+        }
+        a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .links {
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 4px;
+        }
+        .links ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .links li {
+            margin: 8px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>📊 Analyse des Simulations Unity - Comparaison des 4 Agencements</h1>
+    
+    <div class="section">
+        <h2>📁 Fichiers générés</h2>
+        <div class="links">
+            <ul>
+                <li>📄 <a href="summary_wide.csv">summary_wide.csv</a> - Tableau complet (format large)</li>
+                <li>📄 <a href="kpi_key.csv">kpi_key.csv</a> - KPI clés et métriques dérivées</li>
+                <li>📄 <a href="report.md">report.md</a> - Rapport détaillé</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2>📈 KPI Clés</h2>
+        <div class="figure-grid">
+            <div class="figure-item">
+                <img src="figures/kpi_Global_DureeTotaleSecondes.png" alt="Global - DureeTotaleSecondes">
+                <p>Global - DureeTotaleSecondes</p>
+            </div>
+            <div class="figure-item">
+                <img src="figures/kpi_Global_VolumeVentes.png" alt="Global - VolumeVentes">
+                <p>Global - VolumeVentes</p>
+            </div>
+            <div class="figure-item">
+                <img src="figures/kpi_Performance_DebitClients.png" alt="Performance - DebitClients">
+                <p>Performance - DebitClients</p>
+            </div>
+            <div class="figure-item">
+                <img src="figures/kpi_Performance_PanierMoyen.png" alt="Performance - PanierMoyen">
+                <p>Performance - PanierMoyen</p>
+            </div>
+            <div class="figure-item">
+                <img src="figures/kpi_Parcours_IndiceDetour.png" alt="Parcours - IndiceDetour">
+                <p>Parcours - IndiceDetour</p>
+            </div>
+            <div class="figure-item">
+                <img src="figures/kpi_Parcours_TotalRepassages.png" alt="Parcours - TotalRepassages">
+                <p>Parcours - TotalRepassages</p>
+            </div>
+            <div class="figure-item">
+                <img src="figures/kpi_Parcours_TauxRepassageGlobal.png" alt="Parcours - TauxRepassageGlobal">
+                <p>Parcours - TauxRepassageGlobal</p>
+            </div>
+            <div class="figure-item">
+                <img src="figures/kpi_Parcours_DistanceTotaleParcourue.png" alt="Parcours - DistanceTotaleParcourue">
+                <p>Parcours - DistanceTotaleParcourue</p>
+            </div>
+            <div class="figure-item">
+                <img src="figures/kpi_Parcours_DistanceTotaleOptimale.png" alt="Parcours - DistanceTotaleOptimale">
+                <p>Parcours - DistanceTotaleOptimale</p>
+            </div>
+            <div class="figure-item">
+                <img src="figures/kpi_Layout_IndiceFrustrationAttente.png" alt="Layout - IndiceFrustrationAttente">
+                <p>Layout - IndiceFrustrationAttente</p>
+            </div>
+            <div class="figure-item">
+                <img src="figures/kpi_Caisses_AttenteMoyenneSecondes.png" alt="Caisses - AttenteMoyenneSecondes">
+                <p>Caisses - AttenteMoyenneSecondes</p>
+            </div>
+            <div class="figure-item">
+                <img src="figures/kpi_Caisses_Saturations.png" alt="Caisses - Saturations">
+                <p>Caisses - Saturations</p>
+            </div>
+            <div class="figure-item">
+                <img src="figures/kpi_Achat_TauxImpulsif.png" alt="Achat - TauxImpulsif">
+                <p>Achat - TauxImpulsif</p>
+            </div>
+            <div class="figure-item">
+                <img src="figures/kpi_Layout_DensiteAchat.png" alt="Layout - DensiteAchat">
+                <p>Layout - DensiteAchat</p>
+            </div>
+            <div class="figure-item">
+                <img src="figures/kpi_Temps_TempsMoyenShoppingParClient.png" alt="Temps - TempsMoyenShoppingParClient">
+                <p>Temps - TempsMoyenShoppingParClient</p>
+            </div>
+            <div class="figure-item">
+                <img src="figures/kpi_Parcours_ZoneConfusePireRetours.png" alt="Parcours - ZoneConfusePireRetours">
+                <p>Parcours - ZoneConfusePireRetours</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2>🗺️ Analyse des Zones</h2>
+        <div class="figure-grid">
+            <div class="figure-item">
+                <img src="figures/zone_conversion_heatmap.png" alt="Taux de conversion par zone">
+                <p>Taux de conversion par zone</p>
+            </div>
+            <div class="figure-item">
+                <img src="figures/zone_ventes_comparison.png" alt="Ventes par zone">
+                <p>Ventes par zone</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2>📊 Analyses comparatives (Scatter plots)</h2>
+        <div class="figure-grid">
+            <div class="figure-item">
+                <img src="figures/scatter_IndiceDetour_vs_VolumeVentes.png" alt="IndiceDetour vs VolumeVentes">
+                <p>IndiceDetour vs VolumeVentes</p>
+            </div>
+            <div class="figure-item">
+                <img src="figures/scatter_Saturations_vs_DebitClients.png" alt="Saturations vs DebitClients">
+                <p>Saturations vs DebitClients</p>
+            </div>
+            <div class="figure-item">
+                <img src="figures/scatter_AttenteMoyenneSecondes_vs_IndiceFrustrationAttente.png" alt="Attente vs Frustration">
+                <p>Attente vs Frustration</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="section">
+        <p><em>Généré automatiquement par analyze_simulations.py</em></p>
+    </div>
+</body>
+</html>
