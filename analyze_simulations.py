@@ -229,12 +229,14 @@ def check_comparability(dfs: List[pd.DataFrame], scene_labels: List[str]) -> Dic
 # RESTRUCTURATION DES DONNÉES
 # ============================================================================
 
-def build_wide_table(dfs: List[pd.DataFrame], scene_labels: List[str]) -> pd.DataFrame:
+def build_wide_table(dfs: List[pd.DataFrame], scene_labels: List[str]) -> Tuple[pd.DataFrame, Dict[Tuple[str, str], str]]:
     """
     Construit une table "wide" avec index (CATEGORIE, INDICATEUR) et colonnes Scene_1..Scene_4.
     Utilise VALEUR_NUM quand disponible, sinon VALEUR_STR.
+    Retourne aussi un dictionnaire des unités: {(CATEGORIE, INDICATEUR): UNITE}
     """
     all_data = []
+    units_dict = {}
     
     for df, label in zip(dfs, scene_labels):
         for _, row in df.iterrows():
@@ -246,6 +248,10 @@ def build_wide_table(dfs: List[pd.DataFrame], scene_labels: List[str]) -> pd.Dat
                 'SCENE': label,
                 'VALEUR': value
             })
+            # Stocker l'unité (on prend la première rencontrée, elles devraient être identiques)
+            if key not in units_dict:
+                unite = str(row['UNITE']).strip() if pd.notna(row['UNITE']) else ''
+                units_dict[key] = unite
     
     df_long = pd.DataFrame(all_data)
     df_wide = df_long.pivot_table(
@@ -255,7 +261,7 @@ def build_wide_table(dfs: List[pd.DataFrame], scene_labels: List[str]) -> pd.Dat
         aggfunc='first'
     )
     
-    return df_wide
+    return df_wide, units_dict
 
 
 def extract_kpi_table(df_wide: pd.DataFrame, kpi_list: List[str]) -> pd.DataFrame:
@@ -451,7 +457,7 @@ def extract_zone_data(df_wide: pd.DataFrame, zones: List[str]) -> Dict[str, pd.D
 # VISUALISATIONS
 # ============================================================================
 
-def plot_kpi_comparison(df_kpi: pd.DataFrame, kpi_name: str, output_path: str):
+def plot_kpi_comparison(df_kpi: pd.DataFrame, kpi_name: str, output_path: str, units_dict: Dict[Tuple[str, str], str]):
     """
     Génère un bar chart comparatif pour un KPI donné.
     """
@@ -477,11 +483,17 @@ def plot_kpi_comparison(df_kpi: pd.DataFrame, kpi_name: str, output_path: str):
         print(f"    ⚠️ Aucune valeur numérique pour {kpi_name}")
         return
     
+    # Récupérer l'unité
+    unite = units_dict.get((cat, ind), '')
+    ylabel = f'{ind}'
+    if unite:
+        ylabel += f' ({unite})'
+    
     plt.figure(figsize=(10, 6))
     bars = plt.bar(numeric_scenes, numeric_data, color='steelblue', alpha=0.7)
     plt.title(f'{cat} - {ind}', fontsize=14, fontweight='bold')
     plt.xlabel('Scène', fontsize=12)
-    plt.ylabel('Valeur', fontsize=12)
+    plt.ylabel(ylabel, fontsize=12)
     plt.grid(axis='y', alpha=0.3)
     
     # Ajouter les valeurs sur les barres
@@ -496,7 +508,7 @@ def plot_kpi_comparison(df_kpi: pd.DataFrame, kpi_name: str, output_path: str):
     print(f"    ✓ {os.path.basename(output_path)}")
 
 
-def plot_scatter(df_kpi: pd.DataFrame, x_kpi: str, y_kpi: str, output_path: str):
+def plot_scatter(df_kpi: pd.DataFrame, x_kpi: str, y_kpi: str, output_path: str, units_dict: Dict[Tuple[str, str], str]):
     """
     Génère un scatter plot comparant deux KPI.
     """
@@ -528,6 +540,18 @@ def plot_scatter(df_kpi: pd.DataFrame, x_kpi: str, y_kpi: str, output_path: str)
         print(f"    ⚠️ Pas assez de données pour scatter: {x_kpi} vs {y_kpi}")
         return
     
+    # Récupérer les unités
+    x_unite = units_dict.get((x_cat, x_ind), '')
+    y_unite = units_dict.get((y_cat, y_ind), '')
+    
+    xlabel = f'{x_ind}'
+    if x_unite:
+        xlabel += f' ({x_unite})'
+    
+    ylabel = f'{y_ind}'
+    if y_unite:
+        ylabel += f' ({y_unite})'
+    
     plt.figure(figsize=(10, 6))
     plt.scatter(x_values, y_values, s=200, alpha=0.6, c='coral', edgecolors='black', linewidth=2)
     
@@ -535,8 +559,8 @@ def plot_scatter(df_kpi: pd.DataFrame, x_kpi: str, y_kpi: str, output_path: str)
         plt.annotate(label, (x_values[i], y_values[i]), 
                     xytext=(5, 5), textcoords='offset points', fontsize=11)
     
-    plt.xlabel(f'{x_cat} - {x_ind}', fontsize=12)
-    plt.ylabel(f'{y_cat} - {y_ind}', fontsize=12)
+    plt.xlabel(xlabel, fontsize=12)
+    plt.ylabel(ylabel, fontsize=12)
     plt.title(f'{x_ind} vs {y_ind}', fontsize=14, fontweight='bold')
     plt.grid(alpha=0.3)
     plt.tight_layout()
@@ -632,7 +656,7 @@ def plot_zone_sales(df_zone_ventes: pd.DataFrame, output_path: str):
         bottom += data_dict[scene]
     
     ax1.set_xlabel('Zone', fontsize=12)
-    ax1.set_ylabel('Ventes', fontsize=12)
+    ax1.set_ylabel('Ventes (ventes)', fontsize=12)
     ax1.set_title('Ventes par zone (empilé)', fontsize=13, fontweight='bold')
     ax1.set_xticks(x)
     ax1.set_xticklabels(zones, rotation=45, ha='right')
@@ -644,7 +668,7 @@ def plot_zone_sales(df_zone_ventes: pd.DataFrame, output_path: str):
         ax2.bar(x + i * width, data_dict[scene], width, label=scene, color=colors[i])
     
     ax2.set_xlabel('Zone', fontsize=12)
-    ax2.set_ylabel('Ventes', fontsize=12)
+    ax2.set_ylabel('Ventes (ventes)', fontsize=12)
     ax2.set_title('Ventes par zone (groupé)', fontsize=13, fontweight='bold')
     ax2.set_xticks(x + width * (len(scenes) - 1) / 2)
     ax2.set_xticklabels(zones, rotation=45, ha='right')
@@ -1121,7 +1145,13 @@ def main():
     
     # 3. Restructuration
     print("🔄 Étape 3: Restructuration des données...")
-    df_wide = build_wide_table(dfs, SCENE_LABELS)
+    df_wide, units_dict = build_wide_table(dfs, SCENE_LABELS)
+    
+    # Ajouter les unités pour les métriques dérivées (qui n'existent pas dans les CSV)
+    units_dict[('Derived', 'EcartDistance')] = 'm'
+    units_dict[('Derived', 'RepassagesParClient')] = 'retours/client'
+    units_dict[('Derived', 'VitesseMoyenne')] = 'm/s'
+    
     df_wide.to_csv(os.path.join(OUTPUT_DIR, 'summary_wide.csv'), encoding='utf-8')
     print(f"  ✓ Table large générée: {OUTPUT_DIR}/summary_wide.csv")
     
@@ -1162,7 +1192,7 @@ def main():
         cat, ind = kpi.split('::')
         safe_name = f"{cat}_{ind}".replace('::', '_').replace('/', '_')
         fig_path = os.path.join(FIGURES_DIR, f'kpi_{safe_name}.png')
-        plot_kpi_comparison(df_kpi, kpi, fig_path)
+        plot_kpi_comparison(df_kpi, kpi, fig_path, units_dict)
     
     # Scatter plots
     scatter_pairs = [
@@ -1175,7 +1205,7 @@ def main():
         x_safe = x_kpi.split('::')[1]
         y_safe = y_kpi.split('::')[1]
         fig_path = os.path.join(FIGURES_DIR, f'scatter_{x_safe}_vs_{y_safe}.png')
-        plot_scatter(df_kpi, x_kpi, y_kpi, fig_path)
+        plot_scatter(df_kpi, x_kpi, y_kpi, fig_path, units_dict)
     
     # Zones
     plot_zone_heatmap(zone_data['conversion'], 

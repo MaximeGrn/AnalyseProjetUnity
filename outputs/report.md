@@ -1,5 +1,5 @@
 # Rapport d'analyse - Comparaison des 4 agencements
-*Généré le 2026-01-19 19:46:11*
+*Généré le 2026-01-19 19:52:37*
 
 ## Contexte
 Ce rapport compare les performances de 4 agencements de magasin (scènes) basés sur des simulations Unity.
